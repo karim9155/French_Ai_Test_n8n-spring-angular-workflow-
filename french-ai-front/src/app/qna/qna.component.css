@@ -1,0 +1,124 @@
+/* Base wrapper to center the card */
+.qna-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f5f7fa; /* Light gray-blue background */
+}
+
+/* The main card container */
+.qna-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Countdown timer styling */
+.timer {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+  color: #555555;
+  margin-bottom: 1.5rem;
+}
+
+.timer-value {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #222222;
+}
+
+/* Video preview container */
+.video-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.camera-preview {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border: 2px solid #dde2e8;
+  border-radius: 4px;
+  background-color: #000000;
+}
+
+/* Controls (Start button) */
+.controls {
+  margin-bottom: 2rem;
+}
+
+.btn {
+  background-color: #4a90e2;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.65rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.btn:disabled {
+  background-color: #a0c4f5;
+  cursor: not-allowed;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #3b78c4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Record button (a slightly different style) */
+.btn-record {
+  background-color: #e94e77;
+}
+
+.btn-record:hover {
+  background-color: #d03c64;
+}
+
+/* Question section (appears after start) */
+.question-section {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.question-text {
+  font-family: 'Georgia', serif;
+  font-size: 1.15rem;
+  color: #333333;
+  margin-bottom: 1rem;
+}
+
+/* Progress indicator */
+.progress {
+  font-size: 0.9rem;
+  color: #777777;
+  margin-top: 1rem;
+}
+
+/* Utility: prevent text select on buttons */
+.btn,
+.timer,
+.question-text {
+  user-select: none;
+}
+.logo-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.logo-img {
+  max-height: 60px;
+  width: auto;
+  display: inline-block;
+}
