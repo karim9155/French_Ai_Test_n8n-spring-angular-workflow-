@@ -1,0 +1,469 @@
+{
+  "name": "French Test",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1b781532-c493-4499-8a3a-fcafa75802a3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        830
+      ],
+      "id": "f4794d09-a507-452e-b2f4-47c68b69f850",
+      "name": "Webhook",
+      "webhookId": "1b781532-c493-4499-8a3a-fcafa75802a3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d7ca2914-c018-4cc1-b193-3701b42ce576",
+              "name": "chatId",
+              "value": "={{ $json.body.chatId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        40,
+        830
+      ],
+      "id": "c1a15b6a-4103-4279-8a4f-e8455898d81e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://4a8e-196-224-82-24.ngrok-free.app/api/recordings/by-chat/{{$json.chatId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        830
+      ],
+      "id": "f557c781-2bf6-4240-afd7-f19e8d4b872a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        480,
+        830
+      ],
+      "id": "80cdfcab-3086-457e-86fa-bf7c92174341",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "=https://4a8e-196-224-82-24.ngrok-free.app/api/recordings/{{ $json.id }}/download",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        700,
+        830
+      ],
+      "id": "eab7b7ee-ea3a-4507-9d5f-0da2e6902cba",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.items }}",
+        "options": {
+          "systemMessage": "Input :\nUn tableau JSON de 10 objets, dans l’ordre, chacun au format :\n{ \"reponse\": \"Texte de la réponse du candidat\" }\n\nTâches :\n\n1. Associer chaque objet “reponse” à son questionIndex (1→10).\n\n2. Pour chaque réponse, attribuer un score entier de 1 à 10 selon :\n   • Grammaire & conjugaisons  \n   • Richesse & justesse du vocabulaire  \n   • Clarté & cohérence  \n   • Adaptation du ton & registre  \n\n3. Fournir pour chaque score un commentaire de 1–2 phrases.  \n   • Si la réponse du candidat se contente de répéter ou de relire la question sans apporter de contenu nouveau, le commentaire doit indiquer que le candidat “répète la question”.\n\n4. Calculer un score_global : moyenne arithmétique des 10 scores, arrondie à une décimale.\n\nVous ne renvoyez que le JSON de sortie VALIDE, sans explications, sans blocs de code Markdown ni texte supplémentaire.\n\nFormat de sortie JSON attendu (IMPORTANT) :\nUn objet JSON unique avec deux propriétés principales :\n\n\"evaluations\": un tableau de 10 objets. Chaque objet de ce tableau doit être au format :\n{\n  \"questionIndex\": [numéro de question],\n  \"reponse\": \"[Texte de la réponse du candidat]\",\n  \"score\": [score attribué],\n  \"commentaire\": \"[commentaire de 1-2 phrases]\"\n}\n\n\"global_score\": [moyenne arithmétique des 10 scores, arrondie à une décimale]\n\nLes questions :\nQuestion 1 : Pouvez-vous vous présenter en quelques phrases ? Décrivez votre parcours, vos compétences en français et vos motivations pour ce poste en centre d'appels.  \nQuestion 2 : Expliquez à un client non spécialiste, en français clair, le principe de fonctionnement d'un panneau photovoltaïque.  \nQuestion 3 : Quelle est la différence entre une pompe à chaleur et un boiler thermique ? Formulez votre réponse comme si vous parliez à un prospect.  \nQuestion 4 : Citez cinq termes techniques liés à nos solutions (photovoltaïque, pompe à chaleur, boiler thermique) et définissez brièvement chacun d'eux.  \nQuestion 5 : Simulation d'appel : un client trouve votre offre de maintenance de pompe à chaleur trop chère. Que lui répondez-vous pour le convaincre de la valeur ajoutée de votre service ?  \nQuestion 6 : Un client mécontent se plaint du délai d'installation trop long. Comment reformulez-vous son problème et quelle solution proposez-vous ?  \nQuestion 7 : Rédigez en français un court email de relance à un prospect qui n'a pas donné suite à votre devis pour l'installation de panneaux solaires.  \nQuestion 8 : Un client vous appelle car son boiler thermique est en panne et il a besoin d'eau chaude immédiatement. Quel processus de prise en charge décrivez-vous ?  \nQuestion 9 : Comment modifiez-vous votre ton et votre vocabulaire selon que votre interlocuteur est un particulier prudent ou un professionnel pressé ? Donnez un exemple de phrase d'accroche pour chacun.  \nQuestion 10 : Simulez un scénario d'appel où vous proposez l’ensemble de nos solutions (photovoltaïque + pompe à chaleur + boiler thermique) à un client intéressé par l’efficacité énergétique de son logement. Structurez votre argumentaire en trois étapes clés.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        920,
+        380
+      ],
+      "id": "648f5861-dbb1-48d1-b9c3-2c0876fb9ae9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        600
+      ],
+      "id": "0be50344-0387-4f99-bc11-d2ae812fe67d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sfVvln0CNVtBm89W",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// items is the array of 10 input items\nreturn [\n  {\n    json: {\n      items: items.map(i => ({ reponse: i.json.text }))\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        480
+      ],
+      "id": "6ca85c73-0f35-476a-b401-6831a6770ae1",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        998,
+        1005
+      ],
+      "id": "223da03a-d2a9-4c66-8e2b-2e66642600aa",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "sfVvln0CNVtBm89W",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const agentOutputRaw = $input.first().json.output; // Get the raw JSON string from AI Agent\n\nlet agentOutput;\ntry {\n  // Directly parse the string as a JSON object\n  agentOutput = JSON.parse(agentOutputRaw);\n\n} catch (e) {\n  console.error(\"Error parsing AI Agent output as JSON:\", e);\n  // Fallback if parsing fails\n  agentOutput = { evaluations: [], global_score: undefined };\n}\n\n// Now, agentOutput is an object, and agentOutput.evaluations is the array\nconst evaluations = agentOutput.evaluations || []; // Ensure evaluations is an array, fallback to empty if not found\n\n\nlet emailBody = \"Dear Team,\\n\\n\";\nemailBody += \"Here are the evaluation results for the recent French voice AI session:\\n\\n\";\n\nif (evaluations.length > 0) {\n  evaluations.forEach(evalItem => {\n    emailBody += `--- Question ${evalItem.questionIndex} ---\\n`;\n    emailBody += `Candidate's Response: ${evalItem.reponse || 'N/A'}\\n`; // Include the response\n    emailBody += `Score: ${evalItem.score}\\n`;\n    emailBody += `Comment: ${evalItem.commentaire}\\n\\n`;\n  });\n} else {\n  emailBody += \"No detailed evaluations found or structure is unexpected.\\n\\n\";\n}\n\n// Global score is now directly accessible\nif (agentOutput.global_score !== undefined) {\n  emailBody += `------------------------\\n`;\n  emailBody += `Global Score: ${agentOutput.global_score}\\n\\n`;\n} else {\n  // This else should now ideally not be hit if the AI Agent is consistent\n  emailBody += \"Global score not available.\\n\\n\";\n}\n\nemailBody += \"Best regards,\\nYour n8n Automation\";\n\n\n// HTML Version (updated to include candidate's response and use new structure)\nlet emailHtmlBody = `\n<html>\n  <head>\n    <style>\n      body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n      .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }\n      h2 { color: #0056b3; }\n      .question-section { margin-bottom: 15px; padding: 10px; border: 1px solid #eee; border-radius: 5px; background-color: #fff; }\n      .score { font-weight: bold; color: #28a745; }\n      .comment { font-style: italic; color: #666; }\n      .response { font-style: normal; color: #007bff; border-left: 3px solid #007bff; padding-left: 10px; margin-top: 5px; }\n      .global-score { margin-top: 20px; padding: 10px; background-color: #e9ecef; border-radius: 5px; font-weight: bold; font-size: 1.1em; text-align: center; }\n      .footer { margin-top: 30px; font-size: 0.9em; color: #888; text-align: center; }\n    </style>\n  </head>\n  <body>\n    <div class=\"container\">\n      <h2>French Voice AI Session Evaluation Results with chat id :</h2>\n      <p>Dear Team,</p>\n      <p>Here are the detailed evaluation results for the recent session:</p>\n`;\n\nif (evaluations.length > 0) {\n  evaluations.forEach(evalItem => {\n    emailHtmlBody += `\n      <div class=\"question-section\">\n        <h3>Question ${evalItem.questionIndex}</h3>\n        <p><strong>Candidate's Response:</strong></p>\n        <div class=\"response\">${evalItem.reponse || 'N/A'}</div>\n        <p><span class=\"score\">Score:</span> ${evalItem.score}</p>\n        <p><span class=\"comment\">Comment:</span> ${evalItem.commentaire}</p>\n      </div>\n    `;\n  });\n} else {\n  emailHtmlBody += `<p>No detailed evaluations found or structure is unexpected.</p>`;\n}\n\nif (agentOutput.global_score !== undefined) {\n  emailHtmlBody += `\n      <div class=\"global-score\">\n        Global Score: ${agentOutput.global_score}\n      </div>\n  `;\n} else {\n  emailHtmlBody += `<p>Global score not available.</p>`;\n}\n\nemailHtmlBody += `\n      <div class=\"footer\">\n        <p>Best regards,<br>Your n8n Automation</p>\n      </div>\n    </div>\n  </body>\n</html>\n`;\n\n\nreturn [\n  {\n    json: {\n      emailSubject: \"French Voice AI Session Evaluation Results\",\n      emailBodyText: emailBody,\n      emailBodyHtml: emailHtmlBody\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        480
+      ],
+      "id": "1ceac623-c58c-4ead-9946-e02b317103b2",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "sendTo": "klilakarim35@gmail.com",
+        "subject": "={{ $json.emailSubject }}",
+        "message": "={{ $json.emailBodyHtml }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1516,
+        480
+      ],
+      "id": "2426e850-9409-48be-aba5-b3b8c328de1d",
+      "name": "Gmail",
+      "webhookId": "319f1220-01c1-41ef-a7b1-41c5bea98aaa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "KOE5K0Tq0E9LGcCS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.parseJson().global_score }}",
+                    "rightValue": 5,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "59ba0c3c-79b2-4684-8151-95a91c6d836a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4295bfd5-a310-4fa7-8596-39a081c5dc98",
+                    "leftValue": "={{ $json.output.parseJson().global_score }}",
+                    "rightValue": 5,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1360,
+        220
+      ],
+      "id": "64e7a718-50a7-407f-80fd-57217fba7ed2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "name": "=Question : {{ $json.questionIndex }} id  : {{ $json.id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "=https://drive.google.com/drive/folders/1uj6ZPW7Z7uCJETpyonoP1CW3whD1GVin?usp=sharing",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        998,
+        780
+      ],
+      "id": "8b6b35dc-3d99-42a4-aa52-023c480965e0",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "4k9Uibiusb1vJ0WY",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n-cvg2.onrender.com",
+            "user-agent": "Java/24",
+            "content-length": "49",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "196.224.82.24",
+            "cf-ipcountry": "TN",
+            "cf-ray": "957dc9141d1bb5aa-MXP",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "content-type": "application/json",
+            "render-proxy-ttl": "4",
+            "rndr-id": "d6a42cdd-4256-48c6",
+            "true-client-ip": "196.224.82.24",
+            "x-forwarded-for": "196.224.82.24, 172.69.9.145, 10.223.104.223",
+            "x-forwarded-proto": "https",
+            "x-request-start": "1751287786088439"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "chatId": "74122da8-7dd0-4e5a-a1c8-e0a3436eff2a"
+          },
+          "webhookUrl": "https://n8n-cvg2.onrender.com/webhook/1b781532-c493-4499-8a3a-fcafa75802a3",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4abae497-b072-4715-9b0d-68b60d5a03b3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c20e4fd0df446d704005b0a1540784e3cd0ffd9948187e489c253f46519d6ad6"
+  },
+  "id": "JrA0EB3m9uoUu1Zr",
+  "tags": []
+}
