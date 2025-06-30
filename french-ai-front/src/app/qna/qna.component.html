@@ -1,0 +1,46 @@
+<div class="qna-wrapper">
+  <div class="qna-card">
+    <!-- Logo placeholder -->
+
+    <!-- 30-minute countdown display -->
+    <div class="timer">
+      Time remaining: <span class="timer-value">{{ countdownDisplay }}</span>
+    </div>
+
+    <!-- Video preview -->
+    <div class="video-container">
+      <video
+        #videoElement
+        autoplay
+        playsinline
+        muted
+        class="camera-preview"
+      ></video>
+    </div>
+
+    <!-- “Start Questions” button -->
+    <div class="controls">
+      <button class="btn btn-primary start-btn" (click)="startQuestionnaire()" [disabled]="questionnaireStarted">
+        Start
+      </button>
+    </div>
+
+    <!-- Question view, shown once questionnaireStarted = true -->
+    <div *ngIf="questionnaireStarted" class="question-section">
+      <p class="question-text">{{ currentQuestion }}</p>
+
+      <button
+        class="btn btn-record"
+        (click)="toggleRecording()"
+        [disabled]="sessionCompleted"
+      >
+        {{ isRecording ? 'Stop Recording' : 'Record Answer' }}
+      </button>
+    </div>
+
+    <!-- Progress indicator -->
+    <div *ngIf="questionnaireStarted" class="progress">
+      Question {{ questionIndex + 1 }} / {{ questions.length }}
+    </div>
+  </div>
+</div>
