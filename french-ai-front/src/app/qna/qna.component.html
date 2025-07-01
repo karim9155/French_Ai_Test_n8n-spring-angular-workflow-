@@ -1,46 +1,90 @@
 <div class="qna-wrapper">
   <div class="qna-card">
-    <!-- Logo placeholder -->
-
-    <!-- 30-minute countdown display -->
-    <div class="timer">
-      Time remaining: <span class="timer-value">{{ countdownDisplay }}</span>
+    <!-- Switzerland Innovation Logo -->
+    <div class="logo-container">
+      <img src="assets/logos_colored_with_baseline.png" alt="Switzerland Innovation & Co" class="logo-img">
     </div>
 
-    <!-- Video preview -->
+    <!-- Enhanced timer display -->
+    <div class="timer-container">
+      <div class="timer-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12,6 12,12 16,14"/>
+        </svg>
+      </div>
+      <div class="timer-content">
+        <span class="timer-label">Time Remaining</span>
+        <span class="timer-value">{{ countdownDisplay }}</span>
+      </div>
+    </div>
+
+    <!-- Modern video container -->
     <div class="video-container">
-      <video
-        #videoElement
-        autoplay
-        playsinline
-        muted
-        class="camera-preview"
-      ></video>
+      <div class="video-wrapper">
+        <video
+          #videoElement
+          autoplay
+          playsinline
+          muted
+          class="camera-preview"
+        ></video>
+        <div class="video-overlay">
+          <div class="recording-indicator" [class.active]="isRecording">
+            <div class="recording-dot"></div>
+            <span *ngIf="isRecording">Recording</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- “Start Questions” button -->
-    <div class="controls">
+    <!-- Modern controls -->
+    <div class="controls" *ngIf="!questionnaireStarted">
       <button class="btn btn-primary start-btn" (click)="startQuestionnaire()" [disabled]="questionnaireStarted">
-        Start
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="5,3 19,12 5,21"/>
+        </svg>
+        Start Interview
       </button>
     </div>
 
-    <!-- Question view, shown once questionnaireStarted = true -->
+    <!-- Enhanced question section -->
     <div *ngIf="questionnaireStarted" class="question-section">
-      <p class="question-text">{{ currentQuestion }}</p>
+      <div class="question-card">
+        <div class="question-header">
+          <span class="question-number">Question {{ questionIndex + 1 }}</span>
+          <div class="progress-dots">
+            <span
+              *ngFor="let question of questions; let i = index"
+              class="progress-dot"
+              [class.active]="i <= questionIndex"
+              [class.current]="i === questionIndex">
+            </span>
+          </div>
+        </div>
+        <p class="question-text">{{ currentQuestion }}</p>
 
-      <button
-        class="btn btn-record"
-        (click)="toggleRecording()"
-        [disabled]="sessionCompleted"
-      >
-        {{ isRecording ? 'Stop Recording' : 'Record Answer' }}
-      </button>
+        <button
+          class="btn btn-record"
+          (click)="toggleRecording()"
+          [disabled]="sessionCompleted"
+          [class.recording]="isRecording"
+        >
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" *ngIf="!isRecording"/>
+            <rect x="9" y="9" width="6" height="6" *ngIf="isRecording"/>
+          </svg>
+          {{ isRecording ? 'Stop Recording' : 'Record Answer' }}
+        </button>
+      </div>
     </div>
 
-    <!-- Progress indicator -->
-    <div *ngIf="questionnaireStarted" class="progress">
-      Question {{ questionIndex + 1 }} / {{ questions.length }}
+    <!-- Enhanced progress indicator -->
+    <div *ngIf="questionnaireStarted" class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="((questionIndex + 1) / questions.length) * 100"></div>
+      </div>
+      <span class="progress-text">{{ questionIndex + 1 }} of {{ questions.length }} questions</span>
     </div>
   </div>
 </div>

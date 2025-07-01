@@ -20,8 +20,10 @@ import java.util.Map;
 @RequestMapping("/api/recordings")
 @CrossOrigin(origins = {
         "https://192.168.10.149:4200",
-        "https://ebbd-154-107-134-165.ngrok-free.app"
-})@RequiredArgsConstructor
+        "https://ebbd-154-107-134-165.ngrok-free.app",
+        "https://localhost:4200"
+})
+@RequiredArgsConstructor
 public class RecordingController {
 
     private final AnswerRecordingRepository repo;
