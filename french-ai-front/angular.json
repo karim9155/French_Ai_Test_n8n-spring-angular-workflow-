@@ -33,7 +33,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [
@@ -78,10 +79,7 @@
           "defaultConfiguration": "development",
           "options": {
             "host": "0.0.0.0",
-            "disableHostCheck": true,
-            "ssl": true,
-            "sslKey": "192.168.163.1+1-key.pem",
-            "sslCert": "192.168.163.1+1.pem"
+            "disableHostCheck": true
           }
         },
         "extract-i18n": {
@@ -99,6 +97,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [
