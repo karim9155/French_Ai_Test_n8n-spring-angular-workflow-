@@ -7,22 +7,29 @@ import {
   ViewChild
 } from '@angular/core';
 import {HttpClient, HttpEvent, HttpEventType, HttpHeaders, HttpResponse} from '@angular/common/http';
-import {NgIf} from '@angular/common';
+import {NgIf, NgFor, DatePipe} from '@angular/common'; // Added NgFor, DatePipe
+import { FormsModule } from '@angular/forms'; // Added FormsModule
 import {last} from 'rxjs';
 
 @Component({
   selector: 'app-qna',
   templateUrl: './qna.component.html',
   imports: [
-    NgIf
+    NgIf,
+    NgFor, // Added for *ngFor
+    FormsModule, // Added for [(ngModel)]
+    DatePipe // Added for date pipe
   ],
   styleUrls: ['./qna.component.css']
 })
 export class QnaComponent implements OnInit, OnDestroy {
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
 
-  // Timer
+  // Email
+  userEmail: string | null = null;
+  emailSubmitted: boolean = false;
 
+  // Timer
   totalSeconds = 30 * 60; // 30 minutes in seconds
   countdownDisplay = '30:00';
   timerIntervalId: any;
@@ -60,6 +67,32 @@ export class QnaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.promptForEmail();
+  }
+
+  promptForEmail(): void {
+    const email = window.prompt('Please enter your email to start the session:');
+    if (email && email.trim() !== '') {
+      this.userEmail = email.trim();
+      this.emailSubmitted = true;
+      // Proceed with session initialization
+      this.initializeSession();
+    } else {
+      // Handle case where user cancels or enters no email
+      alert('Email is required to start the session.');
+      // Optionally, you could re-prompt or prevent further interaction
+      // For now, we'll just alert and they'd have to refresh to try again or we can call promptForEmail again.
+      // Let's re-prompt for simplicity here.
+      this.promptForEmail();
+    }
+  }
+
+  initializeSession(): void {
+    if (!this.emailSubmitted || !this.userEmail) {
+      // This should not happen if promptForEmail logic is correct
+      alert('Critical error: Email not submitted before initialization.');
+      return;
+    }
     this.createSession();
     this.startCameraPreview();
     this.startCountdown();
@@ -173,10 +206,16 @@ export class QnaComponent implements OnInit, OnDestroy {
 
   saveRecordingForCurrentQuestion() {
     if (this.sessionCompleted) return;  // no double‐fires
+    if (!this.userEmail) {
+      alert('Error: Email not found. Cannot save recording.');
+      console.error('User email is not set during saveRecordingForCurrentQuestion');
+      return;
+    }
 
     const blob = new Blob(this.recordedChunks, {type: 'audio/webm'});
     const formData = new FormData();
     formData.append('chatId', this.sessionChatId);
+    formData.append('email', this.userEmail); // Add email to form data
     formData.append('questionIndex', this.questionIndex.toString());
     formData.append('file', blob, `answer_q${this.questionIndex}.webm`);
 
@@ -235,4 +274,39 @@ export class QnaComponent implements OnInit, OnDestroy {
     }
   }
 
+  // New properties for fetching recordings by email
+  searchEmail: string = '';
+  searchedRecordings: any[] = []; // Consider creating a type/interface for AnswerRecording
+  isLoadingRecordings: boolean = false;
+  searchError: string | null = null;
+
+  fetchRecordingsByEmail(): void {
+    if (!this.searchEmail || this.searchEmail.trim() === '') {
+      this.searchError = 'Please enter an email to search.';
+      this.searchedRecordings = [];
+      return;
+    }
+    this.isLoadingRecordings = true;
+    this.searchError = null;
+    this.searchedRecordings = [];
+
+    // Assuming the backend URL is the same base as others, just different endpoint
+    // The actual AnswerRecording entity has more fields, adjust 'any[]' as needed
+    this.http.get<any[]>(`https://4a8e-196-224-82-24.ngrok-free.app/api/recordings/by-email/${this.searchEmail.trim()}`)
+      .subscribe({
+        next: (recordings) => {
+          this.searchedRecordings = recordings;
+          this.isLoadingRecordings = false;
+        },
+        error: (err) => {
+          console.error('Error fetching recordings by email:', err);
+          if (err.status === 404) {
+            this.searchError = 'No recordings found for this email.';
+          } else {
+            this.searchError = 'An error occurred while fetching recordings.';
+          }
+          this.isLoadingRecordings = false;
+        }
+      });
+  }
 }

@@ -1,5 +1,7 @@
 <div class="qna-wrapper">
-  <div class="qna-card">
+  <!-- Email prompt is handled by window.prompt in component.ts, so no specific HTML for email input form here yet. -->
+  <!-- The main Q&A card will be shown only after email is submitted. -->
+  <div class="qna-card" *ngIf="emailSubmitted">
     <!-- Switzerland Innovation Logo -->
     <div class="logo-container">
       <img src="assets/logos_colored_with_baseline.png" alt="Switzerland Innovation & Co" class="logo-img">
@@ -85,6 +87,37 @@
         <div class="progress-fill" [style.width.%]="((questionIndex + 1) / questions.length) * 100"></div>
       </div>
       <span class="progress-text">{{ questionIndex + 1 }} of {{ questions.length }} questions</span>
+    </div>
+  </div>
+
+  <!-- Section to Search Recordings by Email -->
+  <div class="recordings-search-card">
+    <h2>Search Recordings by Email</h2>
+    <div class="search-form">
+      <input type="email" [(ngModel)]="searchEmail" placeholder="Enter email to search" class="form-input">
+      <button (click)="fetchRecordingsByEmail()" class="btn btn-secondary search-btn" [disabled]="isLoadingRecordings">
+        {{ isLoadingRecordings ? 'Searching...' : 'Search' }}
+      </button>
+    </div>
+
+    <div *ngIf="searchError" class="error-message">
+      {{ searchError }}
+    </div>
+
+    <div *ngIf="searchedRecordings.length > 0" class="recordings-list">
+      <h3>Recordings for {{ searchEmail }}:</h3>
+      <ul>
+        <li *ngFor="let recording of searchedRecordings">
+          <p><strong>Question Index:</strong> {{ recording.questionIndex }}</p>
+          <p><strong>Recorded At:</strong> {{ recording.recordedAt | date:'medium' }}</p>
+          <p><strong>Session ID (Chat ID):</strong> {{ recording.chatId }}</p>
+          <a href="https://4a8e-196-224-82-24.ngrok-free.app/api/recordings/{{recording.id}}/download" target="_blank" class="btn btn-download">Download Recording (ID: {{recording.id}})</a>
+          <!-- Add more details or a player if needed -->
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="!isLoadingRecordings && searchedRecordings.length === 0 && searchEmail && !searchError" class="no-results-message">
+      No recordings found for the specified email.
     </div>
   </div>
 </div>
