@@ -1,0 +1,195 @@
+/* General container for the recordings page */
+html, body {
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2) General container for the recordings page */
+.recordings-search-container {
+  display: flex;
+  flex-direction: column;      /* stack items top-to-bottom */
+  align-items: center;         /* center horizontally */
+  justify-content: flex-start; /* align to top vertically */
+  min-height: 100vh;           /* fill the viewport */
+  padding: 2rem;
+  background: #f0f2f5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* overflow-y: auto; */      /* ← remove this */
+}
+/* Card styling for the search section */
+.recordings-search-card {
+  width: 100%;
+  max-width: 800px;
+  background: #ffffff;
+  margin-bottom: 2rem; /* Add some margin at the bottom if the card is very long */
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  text-align: left; /* Align text to the left */
+}
+
+.recordings-search-card h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  text-align: center; /* Center the main title */
+}
+
+/* Form styling */
+.search-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-input {
+  flex-grow: 1;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #e81123; /* Highlight color from qna */
+  box-shadow: 0 0 0 3px rgba(232, 17, 35, 0.2); /* Highlight shadow */
+  outline: none;
+}
+
+/* Button styling (copied and adapted from qna.component.css) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px; /* Slightly less rounded */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary { /* For the search button */
+  background: #e81123; /* Main brand color */
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #c14c48; /* Darker shade */
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  background: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.btn-download { /* For download links */
+  background-color: #4a5568; /* Dark gray / slate */
+  color: white;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-download:hover:not(:disabled) {
+  background-color: #2d3748; /* Darker gray */
+}
+
+/* Error and messages */
+.error-message {
+  background-color: #fee2e2; /* Light red */
+  color: #b91c1c; /* Dark red */
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #fecaca;
+}
+
+.no-results-message {
+  color: #4b5563; /* Gray text */
+  padding: 1rem;
+  text-align: center;
+  background-color: #f9fafb; /* Very light gray */
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+/* Recordings list */
+.recordings-list {
+  margin-top: 2rem;
+}
+
+.recordings-list h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.recordings-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recording-item {
+  background: #f9fafb; /* Light background for each item */
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid #e5e7eb; /* Light border */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.recording-item p {
+  margin: 0 0 0.5rem 0;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.recording-item p strong {
+  color: #1f2937;
+}
+
+.recording-actions {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.audio-player {
+  flex-grow: 1;
+  height: 40px; /* Standard height for audio controls */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .recordings-search-container {
+    padding: 1rem;
+  }
+  .recordings-search-card {
+    padding: 1.5rem;
+  }
+  .search-form {
+    flex-direction: column;
+  }
+  .btn {
+    width: 100%;
+  }
+  .recording-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .audio-player {
+    width: 100%;
+  }
+}

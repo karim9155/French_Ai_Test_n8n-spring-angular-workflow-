@@ -13,4 +13,8 @@ public interface AnswerRecordingRepository extends JpaRepository<AnswerRecording
     List<AnswerRecording> findAllByChatIdOrderByQuestionIndexAsc(String chatId);
 
     long countByChatId(String chatId);
+
+    List<AnswerRecording> findAllByEmailOrderByRecordedAtDesc(String email);
+
 }
+
