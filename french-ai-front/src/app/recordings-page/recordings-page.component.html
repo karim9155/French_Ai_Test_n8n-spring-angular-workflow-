@@ -1,0 +1,33 @@
+<div class="recordings-search-container">
+  <div class="recordings-search-card">
+    <h2>Search Recordings by Email</h2>
+    <div class="search-form">
+      <input type="email" [(ngModel)]="searchEmail" placeholder="Enter email to search" class="form-input">
+      <button (click)="fetchRecordingsByEmail()" class="btn btn-secondary search-btn" [disabled]="isLoadingRecordings">
+        {{ isLoadingRecordings ? 'Searching...' : 'Search' }}
+      </button>
+    </div>
+
+    <div *ngIf="searchError" class="error-message">
+      {{ searchError }}
+    </div>
+
+    <div *ngIf="searchedRecordings.length > 0" class="recordings-list">
+      <h3>Recordings for {{ searchEmail }}:</h3>
+      <ul>
+        <li *ngFor="let recording of searchedRecordings" class="recording-item">
+          <p><strong>Question Index:</strong> {{ recording.questionIndex }}</p>
+          <p><strong>Recorded At:</strong> {{ recording.recordedAt | date:'medium' }}</p>
+          <p><strong>Session ID (Chat ID):</strong> {{ recording.chatId }}</p>
+          <div class="recording-actions">
+            <audio controls src="http://localhost:8080/api/recordings/{{recording.id}}/download" class="audio-player"></audio>
+            <a href="http://localhost:8080/api/recordings/{{recording.id}}/download" target="_blank" class="btn btn-download">Download (ID: {{recording.id}})</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="!isLoadingRecordings && searchedRecordings.length === 0 && searchEmail && !searchError" class="no-results-message">
+      No recordings found for the specified email.
+    </div>
+  </div>
+</div>

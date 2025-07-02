@@ -40,6 +40,7 @@ public class RecordingController {
     public ResponseEntity<Map<String, String>> uploadAnswer(
             @RequestParam("chatId") String chatId,
             @RequestParam("questionIndex") int questionIndex,
+            @RequestParam("email") String email, // Added email
             @RequestParam("file") MultipartFile file
     ) {
         if (file.isEmpty()) {
@@ -93,15 +94,16 @@ public class RecordingController {
             // 4) Read the resulting MP3 bytes
             byte[] mp3Bytes = Files.readAllBytes(tempOutputFile);
 
-            // 5) Persist to DB, including the chatId
+            // 5) Persist to DB, including the chatId and email
             AnswerRecording rec = new AnswerRecording();
             rec.setChatId(chatId);
+            rec.setEmail(email); // Set the email
             rec.setQuestionIndex(questionIndex);
             rec.setRecordedAt(LocalDateTime.now());
             rec.setAudioData(mp3Bytes);
             repo.save(rec);
 
-            return ResponseEntity.ok(Map.of("message", "Saved question " + questionIndex + " for chatId " + chatId));
+            return ResponseEntity.ok(Map.of("message", "Saved question " + questionIndex + " for chatId " + chatId + " and email " + email));
         } catch (IOException | InterruptedException ex) {
             ex.printStackTrace();
             return ResponseEntity
@@ -161,5 +163,19 @@ public class RecordingController {
             ));
         }
         return ResponseEntity.ok(summaries);
+    }
+    /**
+     * List all recordings for a given email, returning full AnswerRecording objects.
+     * URL: GET /api/recordings/by-email/{email}
+     */
+    @GetMapping("/by-email/{email}")
+    public ResponseEntity<List<AnswerRecording>> listRecordingsByEmail(
+            @PathVariable("email") String email
+    ) {
+        List<AnswerRecording> recordings = repo.findAllByEmailOrderByRecordedAtDesc(email);
+        if (recordings.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
+        }
+        return ResponseEntity.ok(recordings);
     }
 }
