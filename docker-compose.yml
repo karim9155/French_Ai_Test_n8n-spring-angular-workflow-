@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./french-ai-front
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80" # Angular app runs on port 80 in the container, mapping to 4200 on host
+    depends_on:
+      - backend
+    networks:
+      - french-ai-network
+
+  backend:
+    build:
+      context: ./french_voice_ai
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Spring Boot app runs on port 8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/frenchdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD= # No password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - mysql-db
+    networks:
+      - french-ai-network
+
+  mysql-db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306" # MySQL runs on port 3306
+    environment:
+      MYSQL_DATABASE: frenchdb
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes' # Allowing root with no password, as per your config
+      MYSQL_ROOT_PASSWORD: '' # Setting root password to empty
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - french-ai-network
+
+volumes:
+  mysql-data:
+
+networks:
+  french-ai-network:
+    driver: bridge

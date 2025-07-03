@@ -1,0 +1,19 @@
+# Ignore build artifacts, as they will be generated during the Docker build
+target/
+
+# Ignore IDE and editor-specific files
+.vscode/
+.idea/
+*.iml
+
+# Ignore Maven wrapper files if not needed in the image
+.mvn/
+mvnw
+mvnw.cmd
+
+# Ignore log files
+*.log
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
