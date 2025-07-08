@@ -20,8 +20,8 @@
           <p><strong>Recorded At:</strong> {{ recording.recordedAt | date:'medium' }}</p>
           <p><strong>Session ID (Chat ID):</strong> {{ recording.chatId }}</p>
           <div class="recording-actions">
-            <audio controls src="http://localhost:8080/api/recordings/{{recording.id}}/download" class="audio-player"></audio>
-            <a href="http://localhost:8080/api/recordings/{{recording.id}}/download" target="_blank" class="btn btn-download">Download (ID: {{recording.id}})</a>
+            <audio controls src="/api/recordings/{{recording.id}}/download" class="audio-player"></audio>
+            <a href="/api/recordings/{{recording.id}}/download" target="_blank" class="btn btn-download">Download (ID: {{recording.id}})</a>
           </div>
         </li>
       </ul>

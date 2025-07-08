@@ -68,6 +68,15 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "disableHostCheck": true,
+            "ssl": true,
+            "sslCert": "192.168.163.1+1.pem",
+            "sslKey": "192.168.163.1+1-key.pem",
+            "host": "0.0.0.0",
+            "port": 4200,
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "french-ai-front:build:production"
@@ -76,11 +85,8 @@
               "buildTarget": "french-ai-front:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {
-            "host": "0.0.0.0",
-            "disableHostCheck": true
-          }
+          "defaultConfiguration": "development"
+
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

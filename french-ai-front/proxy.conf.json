@@ -1,8 +1,8 @@
-//{
-//  "/api": {
-//    "target": "https://ba76-196-224-82-24.ngrok-free.app",
-//    "secure": false,
-//    "changeOrigin": true,
-//    "logLevel": "debug"
-//  }
-//}
+{
+  "/api": {
+    "target": "http://172.189.56.154:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+  }
+}

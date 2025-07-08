@@ -27,7 +27,7 @@ export class RecordingsPageComponent { // Reverted to original class name
 
     // Assuming the backend URL is the same base as others, just different endpoint
     // The actual AnswerRecording entity has more fields, adjust 'any[]' as needed
-    this.http.get<any[]>(`http://localhost:8080/api/recordings/by-email/${this.searchEmail.trim()}`)
+    this.http.get<any[]>(`/api/recordings/by-email/${this.searchEmail.trim()}`)
       .subscribe({
         next: (recordings) => {
           this.searchedRecordings = recordings;

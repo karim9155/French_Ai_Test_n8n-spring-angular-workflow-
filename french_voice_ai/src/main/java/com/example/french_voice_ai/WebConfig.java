@@ -14,10 +14,11 @@ public class WebConfig implements WebMvcConfigurer {
         // but only from http://localhost:4200
         registry
                 .addMapping("/**")
-                .allowedOrigins("http://localhost:4200","https://ebbd-154-107-134-165.ngrok-free.app")
+                .allowedOrigins("http://localhost:4200","https://172.23.112.1:4200")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
                 .maxAge(3600);
     }
 }
+

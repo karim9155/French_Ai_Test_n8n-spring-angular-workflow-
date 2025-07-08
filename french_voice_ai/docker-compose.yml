@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    image: karimkli/french-ai-backend:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/frenchdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 200MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 200MB
+      N8N_WEBHOOK_URL: https://n8n-cvg2.onrender.com/webhook/1b781532-c493-4499-8a3a-fcafa75802a3
+    depends_on:
+      - mysql-db
+
+  mysql-db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: frenchdb
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
