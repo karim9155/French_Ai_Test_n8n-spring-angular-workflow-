@@ -1,0 +1,41 @@
+<h2>Test Takers</h2>
+<ul>
+  <li *ngFor="let email of emails">{{ email }}</li>
+</ul>
+
+<hr>
+
+<h2>Manage Questions</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Index</th>
+      <th>Text</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let question of questions">
+      <td>{{ question.questionIndex }}</td>
+      <td>{{ question.text }}</td>
+      <td>
+        <button (click)="editQuestion(question)">Edit</button>
+        <button (click)="deleteQuestion(question.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div>
+  <h3>Add Question</h3>
+  <input [(ngModel)]="newQuestion.questionIndex" placeholder="Index">
+  <input [(ngModel)]="newQuestion.text" placeholder="Text">
+  <button (click)="addQuestion()">Add Question</button>
+</div>
+
+<div *ngIf="editingQuestion">
+  <h3>Edit Question</h3>
+  <input [(ngModel)]="editingQuestion.questionIndex" placeholder="Index">
+  <input [(ngModel)]="editingQuestion.text" placeholder="Text">
+  <button (click)="updateQuestion()">Update Question</button>
+  <button (click)="cancelEdit()">Cancel</button>
+</div>

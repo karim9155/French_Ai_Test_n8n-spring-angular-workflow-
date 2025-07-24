@@ -178,4 +178,9 @@ public class RecordingController {
         }
         return ResponseEntity.ok(recordings);
     }
+
+    @GetMapping("/distinct-emails")
+    public ResponseEntity<List<String>> getDistinctEmails() {
+        return ResponseEntity.ok(repo.findDistinctEmails());
+    }
 }

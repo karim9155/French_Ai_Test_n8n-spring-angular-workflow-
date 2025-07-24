@@ -10,6 +10,7 @@ import {HttpClient, HttpEvent, HttpEventType, HttpHeaders, HttpResponse} from '@
 import {NgIf, NgFor, DatePipe} from '@angular/common'; // Added NgFor, DatePipe
 import { FormsModule } from '@angular/forms'; // Added FormsModule
 import {last} from 'rxjs';
+import { Question, QuestionService } from '../services/question.service';
 
 @Component({
   selector: 'app-qna',
@@ -43,31 +44,23 @@ export class QnaComponent implements OnInit, OnDestroy {
   sessionCompleted = false;
   // Questionnaire logic
   sessionChatId!: string;
-  questions: string[] = [
-    'Question 1: Pouvez-vous vous présenter en quelques phrases ? Décrivez votre parcours, vos compétences en français et vos motivations pour ce poste en centre d\'appels.',
-    'Question 2: Expliquez à un client non spécialiste, en français clair, le principe de fonctionnement d\'un panneau photovoltaïque.',
-    'Question 3: Quelle est la différence entre une pompe à chaleur et un boiler thermique ? Formulez votre réponse comme si vous parliez à un prospect.',
-    'Question 4: Citez cinq termes techniques liés à nos solutions (photovoltaïque, pompe à chaleur, boiler thermique) et définissez brièvement chacun d\'eux.',
-    'Question 5: Simulation d\'appel : un client trouve votre offre de maintenance de pompe à chaleur trop chère. Que lui répondez-vous pour le convaincre de la valeur ajoutée de votre service ?',
-    'Question 6: Un client mécontent se plaint du délai d\'installation trop long. Comment reformulez-vous son problème et quelle solution proposez-vous ?',
-    'Question 7: Rédigez en français un court email de relance à un prospect qui n\'a pas donné suite à votre devis pour l\'installation de panneaux solaires.',
-    'Question 8: Un client vous appelle car son boiler thermique est en panne et il a besoin d\'eau chaude immédiatement. Quel processus de prise en charge décrivez-vous ?',
-    'Question 9: Comment modifiez-vous votre ton et votre vocabulaire selon que votre interlocuteur est un particulier prudent ou un professionnel pressé ? Donnez un exemple de phrase d\'accroche pour chacun.',
-    'Question 10: Simulez un scénario d\'appel où vous proposez l’ensemble de nos solutions (photovoltaïque + pompe à chaleur + boiler thermique) à un client intéressé par l’efficacité énergétique de son logement. Structurez votre argumentaire en trois étapes clés.'
-  ];
+  questions: Question[] = [];
 
   questionIndex = 0;
   questionnaireStarted = false;
 
-  get currentQuestion(): string {
+  get currentQuestion(): Question {
     return this.questions[this.questionIndex];
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private questionService: QuestionService) {
   }
 
   ngOnInit(): void {
     this.promptForEmail();
+    this.questionService.getAll().subscribe(questions => {
+      this.questions = questions;
+    });
   }
 
   promptForEmail(): void {

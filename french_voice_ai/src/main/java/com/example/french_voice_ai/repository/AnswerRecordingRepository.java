@@ -3,6 +3,7 @@ package com.example.french_voice_ai.repository;
 
 import com.example.french_voice_ai.entitie.AnswerRecording;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,5 +17,7 @@ public interface AnswerRecordingRepository extends JpaRepository<AnswerRecording
 
     List<AnswerRecording> findAllByEmailOrderByRecordedAtDesc(String email);
 
+    @Query("SELECT DISTINCT a.email FROM AnswerRecording a")
+    List<String> findDistinctEmails();
 }
 
