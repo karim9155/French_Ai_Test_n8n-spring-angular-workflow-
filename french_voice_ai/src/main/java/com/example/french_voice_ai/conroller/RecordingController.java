@@ -178,4 +178,17 @@ public class RecordingController {
         }
         return ResponseEntity.ok(recordings);
     }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<Map<String, Object>>> listUsers() {
+        List<AnswerRecording> latestRecordings = repo.findLatestRecordingForEachEmail();
+        var summaries = new ArrayList<Map<String, Object>>();
+        for (AnswerRecording r : latestRecordings) {
+            summaries.add(Map.of(
+                    "email", r.getEmail(),
+                    "recordedAt", r.getRecordedAt()
+            ));
+        }
+        return ResponseEntity.ok(summaries);
+    }
 }

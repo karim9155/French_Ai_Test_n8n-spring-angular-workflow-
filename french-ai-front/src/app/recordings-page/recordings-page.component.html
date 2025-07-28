@@ -1,33 +1,127 @@
-<div class="recordings-search-container">
-  <div class="recordings-search-card">
-    <h2>Search Recordings by Email</h2>
-    <div class="search-form">
-      <input type="email" [(ngModel)]="searchEmail" placeholder="Enter email to search" class="form-input">
-      <button (click)="fetchRecordingsByEmail()" class="btn btn-secondary search-btn" [disabled]="isLoadingRecordings">
-        {{ isLoadingRecordings ? 'Searching...' : 'Search' }}
-      </button>
-    </div>
+<div class="page-layout">
+  <app-side-nav class="sidebar"></app-side-nav>
 
-    <div *ngIf="searchError" class="error-message">
-      {{ searchError }}
-    </div>
-
-    <div *ngIf="searchedRecordings.length > 0" class="recordings-list">
-      <h3>Recordings for {{ searchEmail }}:</h3>
-      <ul>
-        <li *ngFor="let recording of searchedRecordings" class="recording-item">
-          <p><strong>Question Index:</strong> {{ recording.questionIndex }}</p>
-          <p><strong>Recorded At:</strong> {{ recording.recordedAt | date:'medium' }}</p>
-          <p><strong>Session ID (Chat ID):</strong> {{ recording.chatId }}</p>
-          <div class="recording-actions">
-            <audio controls src="/api/recordings/{{recording.id}}/download" class="audio-player"></audio>
-            <a href="/api/recordings/{{recording.id}}/download" target="_blank" class="btn btn-download">Download (ID: {{recording.id}})</a>
+  <div class="main-content">
+    <div class="recordings-container">
+      <!-- Search Section -->
+      <div class="search-section">
+        <div class="search-card">
+          <div class="card-header">
+            <h2 class="card-title">Search Recordings</h2>
           </div>
-        </li>
-      </ul>
-    </div>
-    <div *ngIf="!isLoadingRecordings && searchedRecordings.length === 0 && searchEmail && !searchError" class="no-results-message">
-      No recordings found for the specified email.
+          <div class="search-form">
+            <div class="input-group">
+              <input
+                type="email"
+                [(ngModel)]="searchEmail"
+                placeholder="Enter email to search"
+                class="form-input"
+              >
+              <button
+                (click)="search()"
+                class="btn btn-primary"
+                [disabled]="isLoadingRecordings"
+              >
+                <span *ngIf="isLoadingRecordings" class="loading-spinner"></span>
+                {{ isLoadingRecordings ? 'Searching...' : 'Search' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="users-card">
+          <div class="card-header">
+            <h2 class="card-title">User Exams</h2>
+          </div>
+          <div class="card-content">
+            <div *ngIf="isLoadingUsers" class="loading-state">
+              <div class="loading-spinner"></div>
+              <span>Loading users...</span>
+            </div>
+
+            <div *ngIf="usersError" class="error-message">
+              <div class="error-icon">⚠️</div>
+              {{ usersError }}
+            </div>
+
+            <div *ngIf="!isLoadingUsers && users.length > 0" class="user-list">
+              <div
+                *ngFor="let user of users"
+                (click)="fetchRecordingsByEmail(user.email)"
+                class="user-item"
+                [class.selected]="selectedUser?.email === user.email"
+              >
+                <div class="user-info">
+                  <span class="user-email">{{ user.email }}</span>
+                  <span class="exam-date">{{ user.recordedAt | date:'medium' }}</span>
+                </div>
+                <div class="user-arrow">›</div>
+              </div>
+            </div>
+
+            <div *ngIf="!isLoadingUsers && users.length === 0" class="empty-state">
+              <div class="empty-icon">📝</div>
+              <p>No users found</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recordings Section -->
+      <div class="recordings-section">
+        <div class="recordings-card" *ngIf="selectedUser">
+          <div class="card-header">
+            <h2 class="card-title">Recordings for {{ selectedUser.email }}</h2>
+          </div>
+
+          <div class="card-content">
+            <div *ngIf="isLoadingRecordings" class="loading-state">
+              <div class="loading-spinner"></div>
+              <span>Loading recordings...</span>
+            </div>
+
+            <div *ngIf="searchError" class="error-message">
+              <div class="error-icon">⚠️</div>
+              {{ searchError }}
+            </div>
+
+            <div *ngIf="!isLoadingRecordings && searchedRecordings.length > 0" class="recordings-list">
+              <div *ngFor="let recording of searchedRecordings" class="recording-item">
+                <div class="recording-header">
+                  <div class="recording-info">
+                    <span class="question-index">Question {{ recording.questionIndex }}</span>
+                    <span class="recorded-date">{{ recording.recordedAt | date:'medium' }}</span>
+                  </div>
+                  <span class="session-id">Session: {{ recording.chatId }}</span>
+                </div>
+
+                <div class="recording-actions">
+                  <div class="audio-container">
+                    <audio
+                      controls
+                      src="/api/recordings/{{recording.id}}/download"
+                      class="audio-player"
+                    ></audio>
+                  </div>
+                  <a
+                    href="/api/recordings/{{recording.id}}/download"
+                    target="_blank"
+                    class="btn btn-download"
+                  >
+                    <span class="download-icon">⬇️</span>
+                    Download
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="!isLoadingRecordings && searchedRecordings.length === 0 && !searchError" class="empty-state">
+              <div class="empty-icon">🎵</div>
+              <p>No recordings found for this user</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
         // but only from http://localhost:4200
         registry
                 .addMapping("/**")
-                .allowedOrigins("http://localhost:4200","https://172.23.112.1:4200")
+                .allowedOrigins("http://localhost:4200","https://192.168.10.210:4200")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)

@@ -7,12 +7,14 @@ import { QnaComponent } from './qna/qna.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common'; // Added CommonModule
 import { FormsModule } from '@angular/forms';
-import { RecordingsPageComponent } from './recordings-page/recordings-page.component'; // Added FormsModule
+import { RecordingsPageComponent } from './recordings-page/recordings-page.component';
+import { SideNavComponent } from './side-nav/side-nav.component'; // Added FormsModule
 
 @NgModule({
   declarations: [
     AppComponent,
-    RecordingsPageComponent
+    RecordingsPageComponent,
+    SideNavComponent
   ],
   imports: [
     BrowserModule,
