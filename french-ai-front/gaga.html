@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiveKit Recording Agent Test</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 2rem; background-color: #f4f7f9; color: #333; }
+    .container { max-width: 700px; margin: 0 auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1, h2 { color: #1a1a1a; }
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    input[type="text"], input[type="password"] { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; box-sizing: border-box; }
+    button { background-color: #007bff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; font-size: 1rem; cursor: pointer; transition: background-color 0.2s; }
+    button:hover { background-color: #0056b3; }
+    button:disabled { background-color: #aaa; cursor: not-allowed; }
+    #status { margin-top: 1.5rem; padding: 1rem; border-radius: 4px; background-color: #e9ecef; white-space: pre-wrap; word-wrap: break-word; }
+    .success { background-color: #d4edda; color: #155724; }
+    .error { background-color: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>LiveKit Egress Test Agent</h1>
+  <p>Use this page to start and stop recordings for an active room.</p>
+
+  <div class="form-group">
+    <label for="apiKey">API Key</label>
+    <input type="text" id="apiKey" value="APIRFWMt73aPM4F">
+  </div>
+  <div class="form-group">
+    <label for="apiSecret">API Secret</label>
+    <input type="password" id="apiSecret" value="X2BGJVoervx0PebFeT3hffFRJRJyywZJaaGoxYgbj54B">
+  </div>
+  <div class="form-group">
+    <label for="roomName">Room Name (Paste your chatId here)</label>
+    <input type="text" id="roomName" placeholder="Use the 'Copy Chat ID' button in your app">
+  </div>
+
+  <button id="startButton">▶️ Start Recording</button>
+  <button id="stopButton" disabled>⏹️ Stop Recording</button>
+
+  <h2>Status</h2>
+  <div id="status">Waiting for action...</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsrsasign@10.5.21/lib/jsrsasign-all-min.js"></script>
+
+<script>
+  const apiKeyInput = document.getElementById('apiKey');
+  const apiSecretInput = document.getElementById('apiSecret');
+  const roomNameInput = document.getElementById('roomName');
+  const startButton = document.getElementById('startButton');
+  const stopButton = document.getElementById('stopButton');
+  const statusDiv = document.getElementById('status');
+
+  const LIVEKIT_URL = "https://french-test-vb1u6v65.livekit.cloud";
+  // Make sure this ngrok URL is still active and correct
+  const WEBHOOK_URL = "https://1432da199f93.ngrok-free.app/api/livekit/webhook/recording-finished";
+
+  let egressId = null;
+
+  // Creates the API token with correct permissions
+  function createApiToken(key, secret) {
+    const header = { alg: "HS256", typ: "JWT" };
+    const payload = {
+      iss: key,
+      exp: Math.floor(Date.now() / 1000) + (5 * 60), // Expires in 5 minutes
+      video: {
+        roomAdmin: true,
+        roomRecord: true // Crucial permission for recording
+      }
+    };
+    const sHeader = JSON.stringify(header);
+    const sPayload = JSON.stringify(payload);
+    const jwt = KJUR.jws.JWS.sign("HS256", sHeader, sPayload, { utf8: secret });
+    return jwt;
+  }
+
+  // Shows status messages
+  function showStatus(message, isError = false) {
+    console.log(message);
+    statusDiv.textContent = typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
+    statusDiv.className = isError ? 'error' : 'success';
+  }
+
+  // Event listener for the start button
+  startButton.addEventListener('click', async () => {
+    const roomName = roomNameInput.value.trim();
+    if (!roomName) {
+      showStatus("Error: Room Name is required.", true);
+      return;
+    }
+
+    showStatus("Waiting 3 seconds to prevent race conditions...");
+    await new Promise(resolve => setTimeout(resolve, 3000)); // 3-second delay
+
+    showStatus("Creating API token...");
+    const token = createApiToken(apiKeyInput.value, apiSecretInput.value);
+
+    // This is the correct JSON payload structure
+    const payload = {
+      request: {
+        room_name: roomName,
+        output: {
+          file: {
+            filepath: `interview-recordings/${roomName}.mp4`
+          }
+        },
+        webhooks: [{ url: WEBHOOK_URL }]
+      }
+    };
+
+    showStatus("Sending START request to LiveKit Cloud...");
+    try {
+      const response = await fetch(`${LIVEKIT_URL}/twirp/livekit.Egress/StartRoomCompositeEgress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(`${response.status}: ${data.msg || 'Unknown server error'}`);
+
+      egressId = data.egressId;
+      showStatus(`✅ SUCCESS! Recording started.\nEgress ID: ${egressId}`);
+      startButton.disabled = true;
+      stopButton.disabled = false;
+    } catch (error) {
+      showStatus(`❌ FAILED to start recording.\n${error.message}`, true);
+    }
+  });
+
+  // Event listener for the stop button
+  stopButton.addEventListener('click', async () => {
+    if (!egressId) {
+      showStatus("Error: No active recording to stop.", true);
+      return;
+    }
+
+    showStatus("Creating API token...");
+    const token = createApiToken(apiKeyInput.value, apiSecretInput.value);
+
+    const payload = { egress_id: egressId };
+
+    showStatus("Sending STOP request to LiveKit Cloud...");
+    try {
+      const response = await fetch(`${LIVEKIT_URL}/twirp/livekit.Egress/StopEgress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(`${response.status}: ${data.msg || 'Unknown server error'}`);
+
+      showStatus(`✅ SUCCESS! Recording stopped.`);
+      egressId = null;
+      startButton.disabled = false;
+      stopButton.disabled = true;
+
+    } catch(error) {
+      showStatus(`❌ FAILED to stop recording.\n${error.message}`, true);
+    }
+  });
+
+</script>
+</body>
+</html>

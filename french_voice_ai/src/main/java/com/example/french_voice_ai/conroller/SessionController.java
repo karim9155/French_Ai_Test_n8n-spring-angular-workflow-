@@ -15,11 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/session")
-@CrossOrigin(origins = {
-        "https://192.168.10.149:4200",
-        "https://ebbd-154-107-134-165.ngrok-free.app",
-        "https://localhost:4200"
-})@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class SessionController {
 
     private final AnswerRecordingRepository recordingRepository;

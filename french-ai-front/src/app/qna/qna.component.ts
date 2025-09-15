@@ -14,12 +14,7 @@ import {last} from 'rxjs';
 @Component({
   selector: 'app-qna',
   templateUrl: './qna.component.html',
-  imports: [
-    NgIf,
-    NgFor, // Added for *ngFor
-    FormsModule, // Added for [(ngModel)]
-    //DatePipe // Added for date pipe
-  ],
+  standalone: false,
   styleUrls: ['./qna.component.css']
 })
 export class QnaComponent implements OnInit, OnDestroy {
@@ -105,7 +100,7 @@ export class QnaComponent implements OnInit, OnDestroy {
 
   createSession() {
     this.http
-      .post<{ chatId: string }>('/api/session/create', {})
+      .post<{ chatId: string }>('http://localhost:8080/api/session/create', {})
       .subscribe({
         next: (res) => {
           this.sessionChatId = res.chatId;
@@ -220,7 +215,7 @@ export class QnaComponent implements OnInit, OnDestroy {
     formData.append('file', blob, `answer_q${this.questionIndex}.webm`);
 
     this.http.post<{ count: number; triggered: boolean }>(
-      '/api/recordings/upload',
+      'http://localhost:8080/api/recordings/upload',
       formData
     ).subscribe({
       next: () => {
@@ -243,7 +238,7 @@ export class QnaComponent implements OnInit, OnDestroy {
     if (this.sessionCompleted) return;
 
     this.http.post<{ count: number; triggered: boolean }>(
-      `/api/session/${this.sessionChatId}/complete`,
+      `http://localhost:8080/api/session/${this.sessionChatId}/complete`,
       {}
     ).subscribe({
       next: res => {

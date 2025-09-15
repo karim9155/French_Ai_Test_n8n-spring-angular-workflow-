@@ -14,12 +14,12 @@ import { SideNavComponent } from './side-nav/side-nav.component'; // Added Forms
   declarations: [
     AppComponent,
     RecordingsPageComponent,
-    SideNavComponent
+    SideNavComponent,
+    QnaComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    QnaComponent,
     HttpClientModule,
     // AppRoutingModule is often imported only once. If it's already here, it might be a duplicate from generation.
     // However, Angular is usually fine with this. Let's keep it as is unless issues arise.
