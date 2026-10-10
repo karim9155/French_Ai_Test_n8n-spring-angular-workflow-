@@ -23,6 +23,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD= # No password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL:?Set N8N_WEBHOOK_URL in .env (see .env.example)}
     depends_on:
       - mysql-db
     networks:

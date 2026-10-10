@@ -53,6 +53,7 @@ Angular front-end  ──────►  Spring Boot backend  ─────�
 The project ships with a `docker-compose.yml` that spins up the full stack:
 
 ```bash
+cp .env.example .env   # then set N8N_WEBHOOK_URL
 docker-compose up --build
 ```
 
@@ -61,14 +62,24 @@ This starts:
 - `backend` — Spring Boot API (`localhost:8080`)
 - `mysql-db` — MySQL 8.0 instance
 
-> Note: the n8n workflow (`French_Test.json`) runs separately — import it into your own n8n instance and configure it with your OpenAI API key and SMTP credentials for the HR report emails.
+> Note: the n8n workflow (`French_Test.json`) runs separately — import it into your own n8n instance (see below).
 
 ### Environment variables
 
-The backend expects a database connection (configured via `SPRING_DATASOURCE_*` in `docker-compose.yml`). The n8n workflow requires:
-- An OpenAI API key (transcription + scoring)
-- SMTP or email service credentials (sending the HR report)
-- Backend API base URL (for pulling/pushing candidate data)
+Copy `.env.example` to `.env` at the repo root and fill it in. Docker Compose and the Spring Boot backend both read it, so no URLs or secrets live in the code.
+
+| Variable | Purpose |
+|---|---|
+| `N8N_WEBHOOK_URL` | Production URL of the n8n Webhook node that starts the evaluation workflow |
+
+The database connection is configured via `SPRING_DATASOURCE_*` in `docker-compose.yml`.
+
+### Importing the n8n workflow
+
+After importing `French_Test.json` into n8n:
+- Give the Webhook node a random path, then put its production URL in `N8N_WEBHOOK_URL`.
+- Point the two HTTP Request nodes at your backend (replace `YOUR-BACKEND-URL`).
+- Connect your OpenAI (transcription + scoring), Gmail (HR report) and Google Drive credentials, set the report recipient in the Gmail node, and pick the Drive folder.
 
 ## Roadmap
 

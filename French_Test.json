@@ -4,7 +4,7 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "1b781532-c493-4499-8a3a-fcafa75802a3",
+        "path": "replace-with-a-random-path",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
@@ -15,7 +15,7 @@
       ],
       "id": "f4794d09-a507-452e-b2f4-47c68b69f850",
       "name": "Webhook",
-      "webhookId": "1b781532-c493-4499-8a3a-fcafa75802a3"
+      "webhookId": "90b68085-f387-4b32-beea-9a0121d13972"
     },
     {
       "parameters": {
@@ -42,7 +42,7 @@
     },
     {
       "parameters": {
-        "url": "=https://4a8e-196-224-82-24.ngrok-free.app/api/recordings/by-chat/{{$json.chatId }}",
+        "url": "=https://YOUR-BACKEND-URL/api/recordings/by-chat/{{$json.chatId }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -69,7 +69,7 @@
     },
     {
       "parameters": {
-        "url": "=https://4a8e-196-224-82-24.ngrok-free.app/api/recordings/{{ $json.id }}/download",
+        "url": "=https://YOUR-BACKEND-URL/api/recordings/{{ $json.id }}/download",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -171,7 +171,7 @@
     },
     {
       "parameters": {
-        "sendTo": "klilakarim35@gmail.com",
+        "sendTo": "hr@example.com",
         "subject": "={{ $json.emailSubject }}",
         "message": "={{ $json.emailBodyHtml }}",
         "options": {
@@ -265,7 +265,7 @@
         },
         "folderId": {
           "__rl": true,
-          "value": "=https://drive.google.com/drive/folders/1uj6ZPW7Z7uCJETpyonoP1CW3whD1GVin?usp=sharing",
+          "value": "=https://drive.google.com/drive/folders/YOUR_FOLDER_ID",
           "mode": "url"
         },
         "options": {}
@@ -286,40 +286,7 @@
       }
     }
   ],
-  "pinData": {
-    "Webhook": [
-      {
-        "json": {
-          "headers": {
-            "host": "n8n-cvg2.onrender.com",
-            "user-agent": "Java/24",
-            "content-length": "49",
-            "accept": "*/*",
-            "accept-encoding": "gzip, br",
-            "cdn-loop": "cloudflare; loops=1",
-            "cf-connecting-ip": "196.224.82.24",
-            "cf-ipcountry": "TN",
-            "cf-ray": "957dc9141d1bb5aa-MXP",
-            "cf-visitor": "{\"scheme\":\"https\"}",
-            "content-type": "application/json",
-            "render-proxy-ttl": "4",
-            "rndr-id": "d6a42cdd-4256-48c6",
-            "true-client-ip": "196.224.82.24",
-            "x-forwarded-for": "196.224.82.24, 172.69.9.145, 10.223.104.223",
-            "x-forwarded-proto": "https",
-            "x-request-start": "1751287786088439"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "chatId": "74122da8-7dd0-4e5a-a1c8-e0a3436eff2a"
-          },
-          "webhookUrl": "https://n8n-cvg2.onrender.com/webhook/1b781532-c493-4499-8a3a-fcafa75802a3",
-          "executionMode": "production"
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "connections": {
     "Webhook": {
       "main": [
